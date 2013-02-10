@@ -19,7 +19,7 @@ public class Engine implements Runnable {
 	private static final Color BACKGROUND_COLOR = new Color(0x024994);
 	private static final int DISPLAY_BUFFER_COUNT = 2;
 	private static final int TICK = 10;
-	private static final int PLAYER_SPEED = 5;
+	private static final int PLAYER_SPEED = 3;
 	
 	private Canvas canvas;
 	private BufferStrategy bufferStrategy;
@@ -67,7 +67,7 @@ public class Engine implements Runnable {
 		start();
 	}
 	
-	private void update() {
+	private long update() {
 		long startTime = System.currentTimeMillis();
 		Graphics2D gfx = (Graphics2D)bufferStrategy.getDrawGraphics();
 		
@@ -82,8 +82,10 @@ public class Engine implements Runnable {
 		bufferStrategy.show();
 		Toolkit.getDefaultToolkit().sync();
 		
-		long endTime = System.currentTimeMillis();
-		System.out.println("Update done in "+(endTime-startTime)+" ms.");
+		long totalTime = System.currentTimeMillis() - startTime;
+		System.out.println("Update done in "+totalTime+" ms.");
+		
+		return totalTime;
 	}
 	
 	private void updatePLayerPosition() {
@@ -121,12 +123,14 @@ public class Engine implements Runnable {
 		running = true;
 		
 		while (running) {
-			update();
+			long updateTime = update();
 			
-			try {
-				Thread.sleep(TICK);
-			} catch (InterruptedException e) {
-				throw new Error(e);
+			if (updateTime < TICK) {
+				try {
+					Thread.sleep(TICK-updateTime);
+				} catch (InterruptedException e) {
+					throw new Error(e);
+				}
 			}
 		}
 	}
