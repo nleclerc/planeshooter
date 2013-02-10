@@ -59,6 +59,13 @@ public class Entity {
 		bounds.right = x + rightHalf;
 	}
 	
+	public boolean isOnScreen(Dimension screenDimension) {
+		return bounds.left < screenDimension.width &&
+				bounds.right >= 0 &&
+				bounds.top < screenDimension.height &&
+				bounds.bottom >= 0;
+	}
+	
 	public Dimension getDimension() {
 		return dimension;
 	}

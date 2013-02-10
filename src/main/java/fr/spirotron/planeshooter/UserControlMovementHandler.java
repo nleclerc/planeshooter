@@ -12,7 +12,6 @@ public class UserControlMovementHandler implements MovementHandler, KeyListener 
 	
 	private int controlX;
 	private int controlY;
-	@SuppressWarnings("unused")
 	private boolean controlFiring;
 	
 	private Dimension screenDimension;
@@ -21,6 +20,10 @@ public class UserControlMovementHandler implements MovementHandler, KeyListener 
 		pressBuffer = new TreeSet<Integer>();
 		screenDimension = referenceComponent.getSize();
 		referenceComponent.addKeyListener(this);
+	}
+	
+	public boolean isFiring() {
+		return controlFiring;
 	}
 	
 	@Override

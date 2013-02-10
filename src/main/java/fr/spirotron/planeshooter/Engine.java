@@ -4,8 +4,11 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.image.BufferStrategy;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class Engine implements Runnable {
@@ -17,12 +20,14 @@ public class Engine implements Runnable {
 	private BufferStrategy bufferStrategy;
 	
 	private Entity playerEntity;
+	private List<Entity> playerShots;
 	
 	private Dimension screenDimension;
 	
 	private boolean running;
 	
 	private UserControlMovementHandler userMovementHandler;
+	private PlayerShotMovementHandler playerShotMovementHandler;
 	private EntityFactory entityFactory;
 	
 	public Canvas createCanvas(Dimension screenDimension) {
@@ -33,6 +38,7 @@ public class Engine implements Runnable {
 		canvas.setSize(screenDimension);
 		
 		userMovementHandler = new UserControlMovementHandler(canvas);
+		playerShotMovementHandler = new PlayerShotMovementHandler(screenDimension);
 		
 		return canvas;
 	}
@@ -47,6 +53,9 @@ public class Engine implements Runnable {
 		
 		playerEntity = entityFactory.getEntity("player1", "1945#player1");
 		playerEntity.setPosition(300, 200);
+		
+		playerShots = new ArrayList<Entity>();
+		
 		start();
 	}
 	
@@ -61,6 +70,14 @@ public class Engine implements Runnable {
 		
 		playerEntity.draw(gfx);
 		
+		for (Entity shot: playerShots) {
+			playerShotMovementHandler.update(shot);
+			shot.draw(gfx);
+		}
+		
+		if (userMovementHandler.isFiring())
+			createShot(gfx);
+		
 		gfx.dispose();
 		bufferStrategy.show();
 		Toolkit.getDefaultToolkit().sync();
@@ -71,6 +88,16 @@ public class Engine implements Runnable {
 		return totalTime;
 	}
 	
+	private void createShot(Graphics2D gfx) {
+		Entity newShot = entityFactory.getEntity("player1shot", "1945#player1shot");
+		playerShots.add(newShot);
+		
+		Point playerPosition = playerEntity.getPosition();
+		
+		newShot.setPosition(playerPosition.x, playerPosition.y-30);
+		newShot.draw(gfx);
+	}
+
 	private void start() {
 		new Thread(this, "gamethread").start();
 	}
