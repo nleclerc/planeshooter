@@ -19,12 +19,12 @@ public class Entity {
 		bounds = new Bounds();
 	}
 	
-	public void init(String name, BufferedImage spriteSheet, int sheetX, int sheetY, int width, int height) {
+	public void init(String name, BufferedImage sprite) {
 		this.name = name;
-		sprite = spriteSheet.getSubimage(sheetX, sheetY, width, height);
+		this.sprite = sprite;
 		
-		dimension.height = height;
-		dimension.width = width;
+		dimension.height = sprite.getHeight();
+		dimension.width = sprite.getWidth();
 		
 		setPosition(0, 0);
 	}

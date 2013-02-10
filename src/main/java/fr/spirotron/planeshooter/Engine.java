@@ -6,9 +6,6 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Toolkit;
 import java.awt.image.BufferStrategy;
-import java.awt.image.BufferedImage;
-
-import javax.imageio.ImageIO;
 
 
 public class Engine implements Runnable {
@@ -18,7 +15,6 @@ public class Engine implements Runnable {
 	
 	private Canvas canvas;
 	private BufferStrategy bufferStrategy;
-	private BufferedImage spriteSheet;
 	
 	private Entity playerEntity;
 	
@@ -27,6 +23,7 @@ public class Engine implements Runnable {
 	private boolean running;
 	
 	private UserControlMovementHandler userMovementHandler;
+	private EntityFactory entityFactory;
 	
 	public Canvas createCanvas(Dimension screenDimension) {
 		System.out.println("Creating canvas...");
@@ -45,9 +42,10 @@ public class Engine implements Runnable {
 		canvas.createBufferStrategy(DISPLAY_BUFFER_COUNT);
 		bufferStrategy = canvas.getBufferStrategy();
 		
-		spriteSheet = ImageIO.read(getClass().getResourceAsStream("/1945.png"));
-		playerEntity = new Entity();
-		playerEntity.init("player", spriteSheet, 4, 400, 65, 65);
+		entityFactory = new EntityFactory();
+		entityFactory.init("/spriteSheetList.txt");
+		
+		playerEntity = entityFactory.getEntity("player1", "1945#player1");
 		playerEntity.setPosition(300, 200);
 		start();
 	}
