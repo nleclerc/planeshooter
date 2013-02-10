@@ -36,10 +36,13 @@ public class Engine implements Runnable {
 	
 	private int controlX;
 	private int controlY;
+	@SuppressWarnings("unused")
+	private boolean controlFiring;
 	
 	public Engine() {
 		controlX = 0;
 		controlY = 0;
+		controlFiring = false;
 	}
 	
 	public Canvas createCanvas(int width, int height) {
@@ -162,6 +165,10 @@ public class Engine implements Runnable {
 						controlX++;
 						break;
 						
+					case KeyEvent.VK_SPACE:
+						controlFiring = true;
+						break;
+						
 					default:
 						break;
 				}
@@ -184,6 +191,10 @@ public class Engine implements Runnable {
 					break;
 				case KeyEvent.VK_RIGHT:
 					controlX--;
+					break;
+					
+				case KeyEvent.VK_SPACE:
+					controlFiring = false;
 					break;
 					
 				default:
