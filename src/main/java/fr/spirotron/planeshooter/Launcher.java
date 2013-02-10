@@ -1,5 +1,6 @@
 package fr.spirotron.planeshooter;
 
+import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -9,8 +10,10 @@ public class Launcher {
 		final Engine engine = new Engine();
 		
 		Frame appFrame = new Frame("Plane Shooter");
-		appFrame.add(engine.createCanvas(800, 600));
-		appFrame.setSize(800, 600);
+		Dimension screenDimension = new Dimension(800, 600);
+		
+		appFrame.add(engine.createCanvas(screenDimension));
+		appFrame.setSize(screenDimension);
 		appFrame.pack();
 		appFrame.setResizable(false);
 		appFrame.addWindowListener(new WindowListener() {
