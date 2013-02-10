@@ -2,7 +2,6 @@ package fr.spirotron.planeshooter;
 
 import java.awt.Canvas;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Toolkit;
@@ -27,8 +26,8 @@ public class Engine implements Runnable {
 	
 	private Entity playerEntity;
 	
-	private int width;
-	private int height;
+	private int screenWidth;
+	private int screenHeight;
 	
 	private boolean running;
 	
@@ -47,8 +46,8 @@ public class Engine implements Runnable {
 	
 	public Canvas createCanvas(int width, int height) {
 		System.out.println("Creating canvas...");
-		this.width = width;
-		this.height = height;
+		this.screenWidth = width;
+		this.screenHeight = height;
 		
 		canvas = new Canvas();
 		canvas.setSize(width, height);
@@ -65,7 +64,8 @@ public class Engine implements Runnable {
 		bufferStrategy = canvas.getBufferStrategy();
 		
 		spriteSheet = ImageIO.read(getClass().getResourceAsStream("/1945.png"));
-		playerEntity = new Entity("player", spriteSheet, 4, 400, 65, 65);
+		playerEntity = new Entity();
+		playerEntity.init("player", spriteSheet, 4, 400, 65, 65);
 		playerEntity.setPosition(300, 200);
 		start();
 	}
@@ -75,7 +75,7 @@ public class Engine implements Runnable {
 		Graphics2D gfx = (Graphics2D)bufferStrategy.getDrawGraphics();
 		
 		gfx.setColor(BACKGROUND_COLOR);
-		gfx.fillRect(0, 0, width, height);
+		gfx.fillRect(0, 0, screenWidth, screenHeight);
 		
 		updatePLayerPosition();
 		
@@ -93,22 +93,17 @@ public class Engine implements Runnable {
 	
 	private void updatePLayerPosition() {
 		Point playerPosition = playerEntity.getPosition();
-		Dimension playerDimension = playerEntity.getDimension();
+		Bounds playerBounds = playerEntity.getBounds();
 		
-		int leftBound = playerPosition.x;
-		int rightBound = playerPosition.x+playerDimension.width;
-		int topBound = playerPosition.y;
-		int bottomBound = playerPosition.y+playerDimension.height;
+		if (controlX < 0 && playerBounds.left > PLAYER_SPEED)
+			playerEntity.changePositionX(-PLAYER_SPEED);
+		else if (controlX > 0 && playerBounds.right < (screenWidth-PLAYER_SPEED))
+			playerEntity.changePositionX(PLAYER_SPEED);
 		
-		if (controlX < 0 && leftBound > PLAYER_SPEED)
-			playerPosition.x -= PLAYER_SPEED;
-		else if (controlX > 0 && rightBound < (width-PLAYER_SPEED))
-			playerPosition.x += PLAYER_SPEED;
-		
-		if (controlY < 0 && topBound > PLAYER_SPEED)
-			playerPosition.y -= PLAYER_SPEED;
-		else if (controlY > 0 && bottomBound < (height-PLAYER_SPEED))
-			playerPosition.y += PLAYER_SPEED;
+		if (controlY < 0 && playerBounds.top > PLAYER_SPEED)
+			playerEntity.changePositionY(-PLAYER_SPEED);
+		else if (controlY > 0 && playerBounds.bottom < (screenHeight-PLAYER_SPEED))
+			playerEntity.changePositionY(PLAYER_SPEED);
 		
 		System.out.println("Control: x="+controlX+" y="+controlY);
 		System.out.println("Player: x="+playerPosition.x+" y="+playerPosition.y);
