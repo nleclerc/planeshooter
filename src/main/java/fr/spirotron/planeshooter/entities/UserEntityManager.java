@@ -25,7 +25,12 @@ public class UserEntityManager implements EntityManager, KeyListener {
 	}
 	
 	public boolean isFiring() {
-		return controlFiring;
+		if (controlFiring) {
+			controlFiring = false;
+			return true;
+		}
+		
+		return false;
 	}
 	
 	@Override
