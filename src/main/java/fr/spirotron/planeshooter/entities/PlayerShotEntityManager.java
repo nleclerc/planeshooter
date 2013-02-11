@@ -15,5 +15,7 @@ public class PlayerShotEntityManager implements EntityManager {
 	public void update(Entity entity) {
 		if (entity.isOnScreen(screenDimension))
 			entity.changePositionY(-SHOT_SPEED);
+		else
+			entity.kill();
 	}
 }

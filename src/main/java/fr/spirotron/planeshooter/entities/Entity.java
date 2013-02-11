@@ -8,27 +8,43 @@ import java.awt.image.BufferedImage;
 import fr.spirotron.planeshooter.Bounds;
 
 public class Entity {
-	private String name;
+	private int id;
 	private BufferedImage sprite;
-	private Point position;
-	private Dimension dimension;
-	private Bounds bounds;
+	private boolean dead;
 	
-	public Entity() {
-		name = "UNINITIALIZED_ENTITTY";
-		dimension = new Dimension();
-		position = new Point();
-		bounds = new Bounds();
+	private final Point position = new Point();;
+	private final Dimension dimension = new Dimension();;
+	private final Bounds bounds = new Bounds();;
+	
+	public Entity(int id) {
+		this.id = id;
+		reset();
 	}
 	
-	public void init(String name, BufferedImage sprite) {
-		this.name = name;
+	public void init(BufferedImage sprite) {
 		this.sprite = sprite;
+		dead = false;
 		
 		dimension.height = sprite.getHeight();
 		dimension.width = sprite.getWidth();
 		
 		setPosition(0, 0);
+	}
+	
+	public int getId() {
+		return id;
+	}
+	
+	public boolean isDead() {
+		return dead;
+	}
+	
+	public void kill() {
+		dead = true;
+	}
+	
+	public void reset() {
+		sprite = null;
 	}
 	
 	public Point getPosition() {
@@ -74,10 +90,6 @@ public class Entity {
 	
 	public void draw (Graphics2D gfx) {
 		gfx.drawImage(sprite, null, bounds.left, bounds.top);
-	}
-	
-	public String getName() {
-		return name;
 	}
 	
 	public Bounds getBounds() {

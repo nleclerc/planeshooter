@@ -56,7 +56,7 @@ public class Engine implements Runnable {
 		entityFactory = new EntityFactory();
 		entityFactory.init("/spriteSheetList.txt");
 		
-		playerEntity = entityFactory.getEntity("player1", "1945#player1");
+		playerEntity = entityFactory.activateEntity("1945#player1");
 		playerEntity.setPosition(300, 200);
 		
 		playerShots = new ArrayList<Entity>();
@@ -77,11 +77,31 @@ public class Engine implements Runnable {
 		
 		for (Entity shot: playerShots) {
 			playerShotManager.update(shot);
-			shot.draw(gfx);
+			
+			if (!shot.isDead())
+				shot.draw(gfx);
+		}
+		
+		for (int i=playerShots.size()-1; i>=0; i--) {
+			Entity shot = playerShots.get(i);
+			
+			if (shot.isDead()) {
+				playerShots.remove(i);
+				entityFactory.deactivate(shot.getId());
+			}
 		}
 		
 		if (userManager.isFiring())
 			createShot(gfx);
+		
+		/*
+		for (Iterator<Entity> it=entityFactory.getActivatedEntities(); it.hasNext(); ) {
+			Entity e = it.next();
+			
+			if (e.isDead())
+				
+		}
+		*/
 		
 		gfx.dispose();
 		bufferStrategy.show();
@@ -94,7 +114,7 @@ public class Engine implements Runnable {
 	}
 	
 	private void createShot(Graphics2D gfx) {
-		Entity newShot = entityFactory.getEntity("player1shot", "1945#player1shot");
+		Entity newShot = entityFactory.activateEntity("1945#player1shot");
 		playerShots.add(newShot);
 		
 		Point playerPosition = playerEntity.getPosition();

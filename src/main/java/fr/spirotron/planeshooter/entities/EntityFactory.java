@@ -3,6 +3,7 @@ package fr.spirotron.planeshooter.entities;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -16,17 +17,25 @@ public class EntityFactory {
 	private static final String PROPERTIES_SEPARATOR = "\\.";
 	private static final String SPRITE_TYPE_SEPARATOR = "#";
 	
-	Map<String, SpriteSheet> loadedSheets;
+	private static final int POOL_SIZE = 100;
+	
+	private final Map<String, SpriteSheet> loadedSheets = new TreeMap<String, EntityFactory.SpriteSheet>();
+	private final Entity[] pool = new Entity[POOL_SIZE];
+	private final Entity[] activated = new Entity[POOL_SIZE];
+	
+	private final ActivatedEntityIterator activatedIterator = new ActivatedEntityIterator();
 	
 	public void init(String spriteSheetListResourcePath) throws IOException {
-		loadedSheets = new TreeMap<String, EntityFactory.SpriteSheet>();
 		List<String> spriteSheets = ResourceHelper.loadTextFile("/spriteSheetList.txt");
 		
 		for (String sheetName: spriteSheets)
 			loadedSheets.put(sheetName, new SpriteSheet(sheetName));
+		
+		for (int i=0; i<POOL_SIZE; i++)
+			pool[i] = new Entity(i);
 	}
 	
-	public Entity getEntity(String name, String type) {
+	public Entity activateEntity(String type) {
 		String[] spriteType = type.split(SPRITE_TYPE_SEPARATOR);
 		String sheetName = spriteType[0];
 		String spriteName = spriteType[1];
@@ -34,9 +43,37 @@ public class EntityFactory {
 		if (!loadedSheets.containsKey(sheetName))
 			throw new IllegalArgumentException("Unknown sprite sheet: "+sheetName);
 		
-		Entity newEntity = new Entity();
-		newEntity.init(name, loadedSheets.get(sheetName).getSprite(spriteName));
+		Entity newEntity = lookupInPool();
+		newEntity.init(loadedSheets.get(sheetName).getSprite(spriteName));
 		return newEntity;
+	}
+	
+	private Entity lookupInPool() {
+		for (int i=0; i < POOL_SIZE; i++)
+			if (pool[i] != null) {
+				activated[i] = pool[i];
+				pool[i] = null;
+				return activated[i];
+			}
+				
+		throw new IllegalStateException("No entity left in pool.");
+	}
+
+	public void deactivate(int entityId) {
+		Entity e = activated[entityId];
+		
+		if (e == null)
+			throw new IllegalArgumentException("Entity is not alive: "+entityId);
+		
+		activated[entityId] = null;
+		pool[entityId] = e;
+		
+		e.reset();
+	}
+	
+	public Iterator<Entity> getActivatedEntities() {
+		activatedIterator.reset();
+		return activatedIterator;
 	}
 
 	private class SpriteSheet {
@@ -87,6 +124,35 @@ public class EntityFactory {
 			}
 			
 			return result;
+		}
+	}
+	
+	private class ActivatedEntityIterator implements Iterator<Entity> {
+		private int index;
+		
+		private ActivatedEntityIterator() {
+			reset();
+		}
+		
+		private void reset() {
+			index = 0;
+		}
+		
+		@Override
+		public boolean hasNext() {
+			for (;activated[index] == null && index < POOL_SIZE; index++);
+			
+			return index < POOL_SIZE; // otherwise we reached the end of the activated pool.
+		}
+
+		@Override
+		public Entity next() {
+			return activated[index++];
+		}
+
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException();
 		}
 	}
 }
