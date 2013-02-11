@@ -1,9 +1,11 @@
-package fr.spirotron.planeshooter;
+package fr.spirotron.planeshooter.entities;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
+
+import fr.spirotron.planeshooter.Bounds;
 
 public class Entity {
 	private String name;

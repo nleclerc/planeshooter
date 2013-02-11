@@ -10,6 +10,11 @@ import java.awt.image.BufferStrategy;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.spirotron.planeshooter.entities.Entity;
+import fr.spirotron.planeshooter.entities.EntityFactory;
+import fr.spirotron.planeshooter.entities.PlayerShotEntityManager;
+import fr.spirotron.planeshooter.entities.UserEntityManager;
+
 
 public class Engine implements Runnable {
 	private static final Color BACKGROUND_COLOR = new Color(0x024994);
@@ -26,8 +31,8 @@ public class Engine implements Runnable {
 	
 	private boolean running;
 	
-	private UserControlMovementHandler userMovementHandler;
-	private PlayerShotMovementHandler playerShotMovementHandler;
+	private UserEntityManager userManager;
+	private PlayerShotEntityManager playerShotManager;
 	private EntityFactory entityFactory;
 	
 	public Canvas createCanvas(Dimension screenDimension) {
@@ -37,8 +42,8 @@ public class Engine implements Runnable {
 		canvas = new Canvas();
 		canvas.setSize(screenDimension);
 		
-		userMovementHandler = new UserControlMovementHandler(canvas);
-		playerShotMovementHandler = new PlayerShotMovementHandler(screenDimension);
+		userManager = new UserEntityManager(canvas);
+		playerShotManager = new PlayerShotEntityManager(screenDimension);
 		
 		return canvas;
 	}
@@ -66,16 +71,16 @@ public class Engine implements Runnable {
 		gfx.setColor(BACKGROUND_COLOR);
 		gfx.fillRect(0, 0, screenDimension.width, screenDimension.height);
 		
-		userMovementHandler.update(playerEntity);
+		userManager.update(playerEntity);
 		
 		playerEntity.draw(gfx);
 		
 		for (Entity shot: playerShots) {
-			playerShotMovementHandler.update(shot);
+			playerShotManager.update(shot);
 			shot.draw(gfx);
 		}
 		
-		if (userMovementHandler.isFiring())
+		if (userManager.isFiring())
 			createShot(gfx);
 		
 		gfx.dispose();

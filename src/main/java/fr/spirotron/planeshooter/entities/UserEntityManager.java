@@ -1,4 +1,4 @@
-package fr.spirotron.planeshooter;
+package fr.spirotron.planeshooter.entities;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -6,7 +6,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.TreeSet;
 
-public class UserControlMovementHandler implements MovementHandler, KeyListener {
+import fr.spirotron.planeshooter.Bounds;
+
+public class UserEntityManager implements EntityManager, KeyListener {
 	private static final int PLAYER_SPEED = 3;
 	private final TreeSet<Integer> pressBuffer;
 	
@@ -16,7 +18,7 @@ public class UserControlMovementHandler implements MovementHandler, KeyListener 
 	
 	private Dimension screenDimension;
 	
-	public UserControlMovementHandler (Component referenceComponent) {
+	public UserEntityManager (Component referenceComponent) {
 		pressBuffer = new TreeSet<Integer>();
 		screenDimension = referenceComponent.getSize();
 		referenceComponent.addKeyListener(this);

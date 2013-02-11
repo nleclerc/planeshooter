@@ -1,4 +1,4 @@
-package fr.spirotron.planeshooter;
+package fr.spirotron.planeshooter.entities;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;

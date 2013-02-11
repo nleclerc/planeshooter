@@ -1,13 +1,13 @@
-package fr.spirotron.planeshooter;
+package fr.spirotron.planeshooter.entities;
 
 import java.awt.Dimension;
 
-public class PlayerShotMovementHandler implements MovementHandler {
+public class PlayerShotEntityManager implements EntityManager {
 	private static final int SHOT_SPEED = 8;
 	
 	private Dimension screenDimension;
 	
-	public PlayerShotMovementHandler(Dimension screenDimension) {
+	public PlayerShotEntityManager(Dimension screenDimension) {
 		this.screenDimension = screenDimension;
 	}
 	
