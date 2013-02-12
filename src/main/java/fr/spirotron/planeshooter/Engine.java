@@ -15,6 +15,7 @@ import fr.spirotron.planeshooter.entities.Entity;
 import fr.spirotron.planeshooter.entities.EntityFactory;
 import fr.spirotron.planeshooter.entities.PlayerShotEntityManager;
 import fr.spirotron.planeshooter.entities.UserEntityManager;
+import fr.spirotron.planeshooter.utils.Bounds;
 
 
 public class Engine implements Runnable {

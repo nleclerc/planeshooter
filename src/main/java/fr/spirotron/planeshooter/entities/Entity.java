@@ -5,7 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 
-import fr.spirotron.planeshooter.Bounds;
+import fr.spirotron.planeshooter.utils.Bounds;
 
 public class Entity {
 	private int id;

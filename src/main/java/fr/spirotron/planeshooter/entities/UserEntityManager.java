@@ -6,7 +6,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.TreeSet;
 
-import fr.spirotron.planeshooter.Bounds;
+import fr.spirotron.planeshooter.utils.Bounds;
 
 public class UserEntityManager implements EntityManager, KeyListener {
 	private static final int PLAYER_SPEED = 3;

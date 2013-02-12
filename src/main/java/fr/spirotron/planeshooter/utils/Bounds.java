@@ -1,4 +1,4 @@
-package fr.spirotron.planeshooter;
+package fr.spirotron.planeshooter.utils;
 
 public class Bounds {
 	public int left;
