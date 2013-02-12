@@ -140,7 +140,7 @@ public class EntityFactory {
 		
 		@Override
 		public boolean hasNext() {
-			for (;activated[index] == null && index < POOL_SIZE; index++);
+			for (;index < POOL_SIZE && activated[index] == null; index++);
 			
 			return index < POOL_SIZE; // otherwise we reached the end of the activated pool.
 		}

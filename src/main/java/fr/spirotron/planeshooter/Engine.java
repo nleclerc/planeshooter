@@ -8,6 +8,7 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.image.BufferStrategy;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import fr.spirotron.planeshooter.entities.Entity;
@@ -60,17 +61,38 @@ public class Engine implements Runnable {
 		playerEntity.setPosition(300, 200);
 		
 		playerShots = new ArrayList<Entity>();
-		
+
+		fillBackground();
+
 		start();
 	}
-	
-	private long update() {
-		long startTime = System.currentTimeMillis();
+
+	private void fillBackground() {
 		Graphics2D gfx = (Graphics2D)bufferStrategy.getDrawGraphics();
 		
 		gfx.setColor(BACKGROUND_COLOR);
 		gfx.fillRect(0, 0, screenDimension.width, screenDimension.height);
 		
+		gfx.dispose();
+		bufferStrategy.show();
+		Toolkit.getDefaultToolkit().sync();
+	}
+	
+	private void eraseEntity(Entity entityToErase, Graphics2D gfx) {
+		Dimension dim = entityToErase.getDimension();
+		Bounds bounds = entityToErase.getBounds();
+		
+		gfx.setColor(BACKGROUND_COLOR);
+		gfx.fillRect(bounds.left, bounds.top, dim.width, dim.height);
+	}
+	
+	private long update() {
+		long startTime = System.currentTimeMillis();
+		Graphics2D gfx = (Graphics2D)bufferStrategy.getDrawGraphics();
+
+		for (Iterator<Entity> it=entityFactory.getActivatedEntities(); it.hasNext(); )
+			eraseEntity(it.next(), gfx);
+
 		userManager.update(playerEntity);
 		
 		playerEntity.draw(gfx);
