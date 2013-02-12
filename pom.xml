@@ -5,6 +5,14 @@
 	<artifactId>planeshooter</artifactId>
 	<version>0.0.1</version>
 	<name>PlaneShooter</name>
+	<url>https://github.com/nleclerc/planeshooter</url>
+	<developers>
+		<developer>
+			<id>nl@spirotron.fr</id>
+			<name>Nicolas Leclerc</name>
+			<email>nl@spirotron.fr</email>
+		</developer>
+	</developers>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -21,6 +29,11 @@
 							<mainClass>fr.spirotron.planeshooter.Launcher</mainClass>
 							<packageName>fr.spirotron.planeshooter</packageName>
 						</manifest>
+						<manifestEntries>
+							<url>${project.url}</url>
+							<author>Nicolas Leclerc</author>
+							<author-email>nl@spirotron.fr</author-email>
+						</manifestEntries>
 					</archive>
 				</configuration>
 			</plugin>
