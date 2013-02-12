@@ -97,7 +97,6 @@ public class UserEntityManager implements EntityManager, KeyListener {
 				break;
 				
 			case KeyEvent.VK_SPACE:
-				controlFiring = false;
 				break;
 				
 			default:
