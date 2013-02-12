@@ -4,17 +4,20 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.TreeSet;
+import java.util.Arrays;
 
 import fr.spirotron.planeshooter.utils.Bounds;
 
 public class UserEntityManager implements EntityManager, KeyListener {
-	public static final int STATE_SPAWN_ANIMATION = 0;
-	public static final int STATE_FIRING = 1;
+	// should be enough for most keyboards hopefully.
+	private static final int PRESS_STATES_COUNT = 200;
+	
+	private static final int STATE_SPAWN_ANIMATION = 0;
+	private static final int STATE_FIRING = 1;
 	
 	private static final int PLAYER_SPEED = 3;
 	
-	private final TreeSet<Integer> pressBuffer;
+	private final int[] pressStates;
 	private final Dimension screenDimension;
 	
 	private int controlX;
@@ -22,7 +25,9 @@ public class UserEntityManager implements EntityManager, KeyListener {
 	private boolean controlFiring;
 	
 	public UserEntityManager (Component referenceComponent) {
-		pressBuffer = new TreeSet<Integer>();
+		pressStates = new int[PRESS_STATES_COUNT];
+		Arrays.fill(pressStates, -1);
+		
 		screenDimension = referenceComponent.getSize();
 		referenceComponent.addKeyListener(this);
 	}
@@ -61,11 +66,52 @@ public class UserEntityManager implements EntityManager, KeyListener {
 			entity.changePositionY(PLAYER_SPEED);
 	}
 	
+	private boolean isAlreadyPressed(int keyCode) {
+		int lastEmptyIndex = -1;
+		int foundIndex = -1;
+		
+		for (int i=0,count=pressStates.length; foundIndex < 0 && i < count; i++) {
+			if (pressStates[i] < 0)
+				lastEmptyIndex = i;
+			else if (pressStates[i] == keyCode)
+				foundIndex = i;
+		}
+		
+		if (foundIndex >= 0 && lastEmptyIndex >= 0) {
+			pressStates[lastEmptyIndex] = keyCode;
+			pressStates[foundIndex] = -1;
+		}
+		
+		return foundIndex >= 0;
+	}
+	
+	private void clearPressed(int keyCode) {
+		for (int i=0, count=pressStates.length; i < count; i++) {
+			if (pressStates[i] == keyCode) {
+				pressStates[i] = -1;
+				return;
+			}
+		}
+		
+		throw new IllegalStateException("Key wasn't pressed: "+keyCode);
+	}
+	
+	private void setPressed(int keyCode) {
+		for (int i=0, count=pressStates.length; i < count; i++) {
+			if (pressStates[i] == -1) {
+				pressStates[i] = keyCode;
+				return;
+			}
+		}
+		
+		throw new IllegalStateException("Too many keys pressed at the same time: more than "+PRESS_STATES_COUNT);
+	}
+	
 	public void keyPressed(KeyEvent e) {
 		Integer keyCode = e.getKeyCode();
 		
-		if (!pressBuffer.contains(keyCode)) {
-			pressBuffer.add(keyCode);
+		if (!isAlreadyPressed(keyCode)) {
+			setPressed(keyCode);
 			
 			switch (keyCode) {
 				case KeyEvent.VK_UP:
@@ -93,7 +139,7 @@ public class UserEntityManager implements EntityManager, KeyListener {
 
 	public void keyReleased(KeyEvent e) {
 		Integer keyCode = e.getKeyCode();
-		pressBuffer.remove(keyCode);
+		clearPressed(keyCode);
 		
 		switch (keyCode) {
 			case KeyEvent.VK_UP:
