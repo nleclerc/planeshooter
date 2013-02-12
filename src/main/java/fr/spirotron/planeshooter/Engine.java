@@ -79,20 +79,22 @@ public class Engine implements Runnable {
 		Toolkit.getDefaultToolkit().sync();
 	}
 	
-	private void eraseEntity(Entity entityToErase, Graphics2D gfx) {
-		Dimension dim = entityToErase.getDimension();
-		Bounds bounds = entityToErase.getBounds();
-		
-		gfx.setColor(BACKGROUND_COLOR);
-		gfx.fillRect(bounds.left, bounds.top, dim.width, dim.height);
+	private void eraseEntities(Graphics2D gfx) {
+		for (Iterator<Entity> it=entityFactory.getActivatedEntities(); it.hasNext(); ) {
+			Entity entityToErase = it.next();
+			Dimension dim = entityToErase.getDimension();
+			Bounds bounds = entityToErase.getBounds();
+			
+			gfx.setColor(BACKGROUND_COLOR);
+			gfx.fillRect(bounds.left, bounds.top, dim.width, dim.height);
+		}
 	}
 	
 	private long update() {
 		long startTime = System.currentTimeMillis();
 		Graphics2D gfx = (Graphics2D)bufferStrategy.getDrawGraphics();
-
-		for (Iterator<Entity> it=entityFactory.getActivatedEntities(); it.hasNext(); )
-			eraseEntity(it.next(), gfx);
+		
+		eraseEntities(gfx);
 
 		userManager.update(playerEntity);
 		
