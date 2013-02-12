@@ -5,6 +5,30 @@ import java.util.Iterator;
 import fr.spirotron.planeshooter.SpriteFactory.Sprite;
 
 public class EntityFactory {
+	public enum EntityType {
+		PLAYER1(
+				anim(
+						Sprite.PLAYER1_1,
+						Sprite.PLAYER1_2,
+						Sprite.PLAYER1_3
+				),
+				1
+		),
+		PLAYER1_SHOT(
+				anim(
+						Sprite.PLAYER1_SHOT
+				),
+				0
+		);
+		
+		public final Sprite[] animation;
+		public final int frameDuration;
+		private EntityType(Sprite[] animation, int frameDuration) {
+			this.animation = animation;
+			this.frameDuration = frameDuration;
+		}
+	}
+	
 	private static final int POOL_SIZE = 50;
 	
 	private final Entity[] pool = new Entity[POOL_SIZE];
@@ -17,9 +41,9 @@ public class EntityFactory {
 			pool[i] = new Entity(i);
 	}
 	
-	public Entity activateEntity(Sprite sprite) {
+	public Entity activateEntity(EntityType type) {
 		Entity newEntity = lookupInPool();
-		newEntity.init(sprite);
+		newEntity.init(type);
 		return newEntity;
 	}
 	
@@ -43,6 +67,10 @@ public class EntityFactory {
 	public Iterator<Entity> getActivatedEntities() {
 		activatedIterator.reset();
 		return activatedIterator;
+	}
+	
+	private static Sprite[] anim(Sprite...sprites) {
+		return sprites;
 	}
 	
 	private class ActivatedEntityIterator implements Iterator<Entity> {

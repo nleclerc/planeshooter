@@ -7,13 +7,12 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.image.BufferStrategy;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
-import fr.spirotron.planeshooter.SpriteFactory.Sprite;
+import fr.spirotron.planeshooter.entities.AnimationEntityManager;
 import fr.spirotron.planeshooter.entities.Entity;
 import fr.spirotron.planeshooter.entities.EntityFactory;
+import fr.spirotron.planeshooter.entities.EntityFactory.EntityType;
 import fr.spirotron.planeshooter.entities.PlayerShotEntityManager;
 import fr.spirotron.planeshooter.entities.UserEntityManager;
 import fr.spirotron.planeshooter.utils.Bounds;
@@ -24,18 +23,19 @@ public class Engine implements Runnable {
 	private static final int DISPLAY_BUFFER_COUNT = 2;
 	private static final int TICK = 10;
 	
+	private Dimension screenDimension;
 	private Canvas canvas;
 	private BufferStrategy bufferStrategy;
 	
 	private Entity playerEntity;
-	private List<Entity> playerShots;
 	
-	private Dimension screenDimension;
 	
 	private boolean running;
 	
 	private UserEntityManager userManager;
 	private PlayerShotEntityManager playerShotManager;
+	private AnimationEntityManager animationManager;
+	
 	private EntityFactory entityFactory;
 	
 	public Canvas createCanvas(Dimension screenDimension) {
@@ -47,6 +47,7 @@ public class Engine implements Runnable {
 		
 		userManager = new UserEntityManager(canvas);
 		playerShotManager = new PlayerShotEntityManager(screenDimension);
+		animationManager = new AnimationEntityManager();
 		
 		return canvas;
 	}
@@ -58,11 +59,10 @@ public class Engine implements Runnable {
 		
 		entityFactory = new EntityFactory();
 		
-		playerEntity = entityFactory.activateEntity(Sprite.PLAYER1_1);
+		playerEntity = entityFactory.activateEntity(EntityType.PLAYER1);
 		userManager.initialize(playerEntity);
+		animationManager.initialize(playerEntity);
 		
-		playerShots = new ArrayList<Entity>();
-
 		fillBackground();
 
 		start();
@@ -90,45 +90,57 @@ public class Engine implements Runnable {
 		}
 	}
 	
+	private void updateStates() {
+		for (Iterator<Entity> it=entityFactory.getActivatedEntities(); it.hasNext(); ) {
+			Entity entity = it.next();
+			
+			switch (entity.getType()) {
+				case PLAYER1:
+					userManager.update(entity);
+					
+					if (UserEntityManager.isFiring(playerEntity)) {
+						createShot();
+						UserEntityManager.stopFiring(playerEntity);
+					}
+					break;
+					
+				case PLAYER1_SHOT:
+					playerShotManager.update(entity);
+					break;
+					
+				default:
+					throw new IllegalStateException("Unknown entity type: "+entity.getType());
+			}
+		}
+	}
+	
+	private void releaseDeadEntities() {
+		for (Iterator<Entity> it=entityFactory.getActivatedEntities(); it.hasNext(); ) {
+			Entity entity = it.next();
+			
+			if (entity.isDead())
+				entityFactory.deactivate(entity.getId());
+		}
+	}
+	
+	private void drawEntities(Graphics2D gfx) {
+		for (Iterator<Entity> it=entityFactory.getActivatedEntities(); it.hasNext(); ) {
+			Entity entity = it.next();
+			
+			animationManager.update(entity);
+			entity.draw(gfx);
+		}
+	}
+	
 	private long update() {
 		long startTime = System.currentTimeMillis();
 		Graphics2D gfx = (Graphics2D)bufferStrategy.getDrawGraphics();
 		
 		eraseEntities(gfx);
-
-		userManager.update(playerEntity);
+		updateStates();
 		
-		playerEntity.draw(gfx);
-		
-		for (Entity shot: playerShots) {
-			playerShotManager.update(shot);
-			
-			if (!shot.isDead())
-				shot.draw(gfx);
-		}
-		
-		for (int i=playerShots.size()-1; i>=0; i--) {
-			Entity shot = playerShots.get(i);
-			
-			if (shot.isDead()) {
-				playerShots.remove(i);
-				entityFactory.deactivate(shot.getId());
-			}
-		}
-		
-		if (UserEntityManager.isFiring(playerEntity)) {
-			createShot(gfx);
-			UserEntityManager.stopFiring(playerEntity);
-		}
-		
-		/*
-		for (Iterator<Entity> it=entityFactory.getActivatedEntities(); it.hasNext(); ) {
-			Entity e = it.next();
-			
-			if (e.isDead())
-				
-		}
-		*/
+		releaseDeadEntities();
+		drawEntities(gfx);
 		
 		gfx.dispose();
 		bufferStrategy.show();
@@ -140,15 +152,13 @@ public class Engine implements Runnable {
 		return totalTime;
 	}
 	
-	private void createShot(Graphics2D gfx) {
-		Entity newShot = entityFactory.activateEntity(Sprite.PLAYER1_SHOT);
+	private void createShot() {
+		Entity newShot = entityFactory.activateEntity(EntityType.PLAYER1_SHOT);
 		playerShotManager.initialize(newShot);
-		playerShots.add(newShot);
+		animationManager.initialize(newShot);
 		
 		Point playerPosition = playerEntity.getPosition();
-		
-		newShot.setPosition(playerPosition.x, playerPosition.y-30);
-		newShot.draw(gfx);
+		newShot.setPosition(playerPosition.x, playerPosition.y-20);
 	}
 
 	private void start() {

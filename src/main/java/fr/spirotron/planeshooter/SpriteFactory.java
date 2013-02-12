@@ -8,6 +8,9 @@ import fr.spirotron.planeshooter.utils.ResourceHelper;
 public class SpriteFactory {
 	public enum Sprite {
 		PLAYER1_1 (MAIN_SHEET, 4, 400, 65, 65),
+		PLAYER1_2 (MAIN_SHEET, 70, 400, 65, 65),
+		PLAYER1_3 (MAIN_SHEET, 136, 400, 65, 65),
+		
 		PLAYER1_SHOT (MAIN_SHEET, 4, 169, 32, 32),
 		
 		PLAYER2_1 (MAIN_SHEET, 268, 400, 65, 65),
