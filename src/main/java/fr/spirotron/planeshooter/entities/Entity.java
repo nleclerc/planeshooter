@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 
 import fr.spirotron.planeshooter.SpriteFactory.Sprite;
 import fr.spirotron.planeshooter.utils.Bounds;
@@ -28,8 +29,7 @@ public class Entity {
 		image = sprite.image;
 		dead = false;
 		
-		for (int i=states.length-1; i>=0; i--)
-			i = 0;
+		Arrays.fill(states, 0);
 		
 		dimension.height = image.getHeight();
 		dimension.width = image.getWidth();
