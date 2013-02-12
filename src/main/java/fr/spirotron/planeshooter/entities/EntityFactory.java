@@ -41,9 +41,10 @@ public class EntityFactory {
 			pool[i] = new Entity(i);
 	}
 	
-	public Entity activateEntity(EntityType type) {
+	public Entity activateEntity(EntityType type, EntityManager manager, AnimationEntityManager animationManager) {
 		Entity newEntity = lookupInPool();
-		newEntity.init(type);
+		newEntity.init(type, manager);
+		animationManager.initialize(newEntity);
 		return newEntity;
 	}
 	

@@ -13,8 +13,10 @@ public class Entity {
 	private static final int STATE_COUNT = 20;
 	
 	private int id;
-	private EntityType type;
 	private boolean dead;
+	
+	private EntityType type;
+	private EntityManager manager;
 	
 	private final Point position = new Point();;
 	private final Dimension dimension = new Dimension();;
@@ -29,8 +31,9 @@ public class Entity {
 		this.id = id;
 	}
 	
-	public void init(EntityType type) {
+	public void init(EntityType type, EntityManager manager) {
 		this.type = type;
+		this.manager = manager;
 		dead = false;
 		
 		Arrays.fill(states, 0);
@@ -39,7 +42,11 @@ public class Entity {
 		dimension.height = type.animation[0].image.getHeight();
 		dimension.width = type.animation[0].image.getWidth();
 		
-		setPosition(0, 0);
+		manager.initialize(this);
+	}
+	
+	public void update() {
+		manager.update(this);
 	}
 	
 	public int getId() {

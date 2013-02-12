@@ -4,7 +4,6 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.image.BufferStrategy;
 import java.util.Iterator;
@@ -27,13 +26,13 @@ public class Engine implements Runnable {
 	private Canvas canvas;
 	private BufferStrategy bufferStrategy;
 	
-	private Entity playerEntity;
+	private Entity player1Entity;
 	
 	
 	private boolean running;
 	
-	private UserEntityManager userManager;
-	private PlayerShotEntityManager playerShotManager;
+	private UserEntityManager player1Manager;
+	private PlayerShotEntityManager player1ShotManager;
 	private AnimationEntityManager animationManager;
 	
 	private EntityFactory entityFactory;
@@ -45,8 +44,8 @@ public class Engine implements Runnable {
 		canvas = new Canvas();
 		canvas.setSize(screenDimension);
 		
-		userManager = new UserEntityManager(canvas);
-		playerShotManager = new PlayerShotEntityManager(screenDimension);
+		player1Manager = new UserEntityManager(canvas);
+		player1ShotManager = new PlayerShotEntityManager(screenDimension);
 		animationManager = new AnimationEntityManager();
 		
 		return canvas;
@@ -59,12 +58,10 @@ public class Engine implements Runnable {
 		
 		entityFactory = new EntityFactory();
 		
-		playerEntity = entityFactory.activateEntity(EntityType.PLAYER1);
-		userManager.initialize(playerEntity);
-		animationManager.initialize(playerEntity);
+		player1Entity = entityFactory.activateEntity(EntityType.PLAYER1, player1Manager, animationManager);
+		player1ShotManager.setPlayerEntity(player1Entity);
 		
 		fillBackground();
-
 		start();
 	}
 
@@ -93,23 +90,18 @@ public class Engine implements Runnable {
 	private void updateStates() {
 		for (Iterator<Entity> it=entityFactory.getActivatedEntities(); it.hasNext(); ) {
 			Entity entity = it.next();
+			entity.update();
 			
 			switch (entity.getType()) {
 				case PLAYER1:
-					userManager.update(entity);
-					
-					if (UserEntityManager.isFiring(playerEntity)) {
-						createShot();
-						UserEntityManager.stopFiring(playerEntity);
+					if (UserEntityManager.isFiring(player1Entity)) {
+						createShot(player1ShotManager);
+						UserEntityManager.stopFiring(player1Entity);
 					}
 					break;
 					
-				case PLAYER1_SHOT:
-					playerShotManager.update(entity);
-					break;
-					
 				default:
-					throw new IllegalStateException("Unknown entity type: "+entity.getType());
+					break;
 			}
 		}
 	}
@@ -152,13 +144,8 @@ public class Engine implements Runnable {
 		return totalTime;
 	}
 	
-	private void createShot() {
-		Entity newShot = entityFactory.activateEntity(EntityType.PLAYER1_SHOT);
-		playerShotManager.initialize(newShot);
-		animationManager.initialize(newShot);
-		
-		Point playerPosition = playerEntity.getPosition();
-		newShot.setPosition(playerPosition.x, playerPosition.y-20);
+	private void createShot(PlayerShotEntityManager shotManager) {
+		entityFactory.activateEntity(EntityType.PLAYER1_SHOT, shotManager, animationManager);
 	}
 
 	private void start() {
