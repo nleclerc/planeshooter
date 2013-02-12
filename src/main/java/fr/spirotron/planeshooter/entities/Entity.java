@@ -9,22 +9,27 @@ import fr.spirotron.planeshooter.SpriteFactory.Sprite;
 import fr.spirotron.planeshooter.utils.Bounds;
 
 public class Entity {
+	private static final int STATE_COUNT = 20;
+	
 	private int id;
 	private BufferedImage image;
 	private boolean dead;
 	
 	private final Point position = new Point();;
 	private final Dimension dimension = new Dimension();;
-	private final Bounds bounds = new Bounds();;
+	private final Bounds bounds = new Bounds();
+	public final int[] states = new int[STATE_COUNT];
 	
 	public Entity(int id) {
 		this.id = id;
-		reset();
 	}
 	
 	public void init(Sprite sprite) {
 		image = sprite.image;
 		dead = false;
+		
+		for (int i=states.length-1; i>=0; i--)
+			i = -1;
 		
 		dimension.height = image.getHeight();
 		dimension.width = image.getWidth();
@@ -42,10 +47,6 @@ public class Entity {
 	
 	public void kill() {
 		dead = true;
-	}
-	
-	public void reset() {
-		image = null;
 	}
 	
 	public Point getPosition() {

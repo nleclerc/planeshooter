@@ -38,7 +38,6 @@ public class EntityFactory {
 			throw new IllegalStateException("Entity is not activated: "+entityId);
 		
 		activated[entityId] = false;
-		pool[entityId].reset();
 	}
 	
 	public Iterator<Entity> getActivatedEntities() {
