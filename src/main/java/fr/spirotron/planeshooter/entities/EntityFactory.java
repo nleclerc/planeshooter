@@ -65,6 +65,8 @@ public class EntityFactory {
 
 		@Override
 		public Entity next() {
+			// no check for proper state.
+			// trust myself not to do anything weird...
 			return pool[index++];
 		}
 
