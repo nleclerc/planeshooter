@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import fr.spirotron.planeshooter.SpriteFactory.Sprite;
 import fr.spirotron.planeshooter.entities.Entity;
 import fr.spirotron.planeshooter.entities.EntityFactory;
 import fr.spirotron.planeshooter.entities.PlayerShotEntityManager;
@@ -56,9 +57,8 @@ public class Engine implements Runnable {
 		bufferStrategy = canvas.getBufferStrategy();
 		
 		entityFactory = new EntityFactory();
-		entityFactory.init("/spriteSheetList.txt");
 		
-		playerEntity = entityFactory.activateEntity("1945#player1");
+		playerEntity = entityFactory.activateEntity(Sprite.PLAYER1_1);
 		playerEntity.setPosition(300, 200);
 		
 		playerShots = new ArrayList<Entity>();
@@ -139,7 +139,7 @@ public class Engine implements Runnable {
 	}
 	
 	private void createShot(Graphics2D gfx) {
-		Entity newShot = entityFactory.activateEntity("1945#player1shot");
+		Entity newShot = entityFactory.activateEntity(Sprite.PLAYER1_SHOT);
 		playerShots.add(newShot);
 		
 		Point playerPosition = playerEntity.getPosition();

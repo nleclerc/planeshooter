@@ -5,11 +5,12 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 
+import fr.spirotron.planeshooter.SpriteFactory.Sprite;
 import fr.spirotron.planeshooter.utils.Bounds;
 
 public class Entity {
 	private int id;
-	private BufferedImage sprite;
+	private BufferedImage image;
 	private boolean dead;
 	
 	private final Point position = new Point();;
@@ -21,12 +22,12 @@ public class Entity {
 		reset();
 	}
 	
-	public void init(BufferedImage sprite) {
-		this.sprite = sprite;
+	public void init(Sprite sprite) {
+		image = sprite.image;
 		dead = false;
 		
-		dimension.height = sprite.getHeight();
-		dimension.width = sprite.getWidth();
+		dimension.height = image.getHeight();
+		dimension.width = image.getWidth();
 		
 		setPosition(0, 0);
 	}
@@ -44,7 +45,7 @@ public class Entity {
 	}
 	
 	public void reset() {
-		sprite = null;
+		image = null;
 	}
 	
 	public Point getPosition() {
@@ -89,7 +90,7 @@ public class Entity {
 	}
 	
 	public void draw (Graphics2D gfx) {
-		gfx.drawImage(sprite, null, bounds.left, bounds.top);
+		gfx.drawImage(image, null, bounds.left, bounds.top);
 	}
 	
 	public Bounds getBounds() {
