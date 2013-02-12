@@ -9,14 +9,17 @@ import java.util.TreeSet;
 import fr.spirotron.planeshooter.utils.Bounds;
 
 public class UserEntityManager implements EntityManager, KeyListener {
+	public static final int STATE_SPAWN_ANIMATION = 0;
+	public static final int STATE_FIRING = 1;
+	
 	private static final int PLAYER_SPEED = 3;
+	
 	private final TreeSet<Integer> pressBuffer;
+	private final Dimension screenDimension;
 	
 	private int controlX;
 	private int controlY;
 	private boolean controlFiring;
-	
-	private Dimension screenDimension;
 	
 	public UserEntityManager (Component referenceComponent) {
 		pressBuffer = new TreeSet<Integer>();
@@ -24,17 +27,27 @@ public class UserEntityManager implements EntityManager, KeyListener {
 		referenceComponent.addKeyListener(this);
 	}
 	
-	public boolean isFiring() {
-		if (controlFiring) {
-			controlFiring = false;
-			return true;
-		}
-		
-		return false;
-	}
-	
 	@Override
 	public void update(Entity entity) {
+		if (entity.states[STATE_SPAWN_ANIMATION] > 0) {
+			// animate spawn.
+			
+			entity.changePositionY(-2);
+			entity.states[STATE_SPAWN_ANIMATION]--;
+		} else {
+			updateFiringState(entity);
+			updatePosition(entity);
+		}
+	}
+
+	private void updateFiringState(Entity entity) {
+		if (controlFiring) {
+			entity.states[STATE_FIRING] = 1;
+			controlFiring = false;
+		}
+	}
+
+	private void updatePosition(Entity entity) {
 		Bounds playerBounds = entity.getBounds();
 		
 		if (controlX < 0 && playerBounds.left > PLAYER_SPEED)
@@ -105,5 +118,19 @@ public class UserEntityManager implements EntityManager, KeyListener {
 	}
 	
 	public void keyTyped(KeyEvent e) {
+	}
+	
+	public static boolean isFiring(Entity playerEntity) {
+		return playerEntity.states[STATE_FIRING] != 0;
+	}
+	
+	public static void stopFiring(Entity playerEntity) {
+		playerEntity.states[STATE_FIRING] = 0;
+	}
+
+	@Override
+	public void initialize(Entity entity) {
+		entity.setPosition(screenDimension.width/2, screenDimension.height);
+		entity.states[STATE_SPAWN_ANIMATION] = 45;
 	}
 }

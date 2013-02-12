@@ -18,4 +18,8 @@ public class PlayerShotEntityManager implements EntityManager {
 		else
 			entity.kill();
 	}
+
+	@Override
+	public void initialize(Entity entity) {
+	}
 }

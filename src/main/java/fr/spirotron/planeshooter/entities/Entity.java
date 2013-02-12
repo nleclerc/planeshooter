@@ -29,7 +29,7 @@ public class Entity {
 		dead = false;
 		
 		for (int i=states.length-1; i>=0; i--)
-			i = -1;
+			i = 0;
 		
 		dimension.height = image.getHeight();
 		dimension.width = image.getWidth();
