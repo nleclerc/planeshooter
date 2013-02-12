@@ -5,7 +5,7 @@ import java.awt.Dimension;
 public class PlayerShotEntityManager implements EntityManager {
 	private static final int SHOT_SPEED = 8;
 	
-	private Dimension screenDimension;
+	private final Dimension screenDimension;
 	
 	public PlayerShotEntityManager(Dimension screenDimension) {
 		this.screenDimension = screenDimension;
