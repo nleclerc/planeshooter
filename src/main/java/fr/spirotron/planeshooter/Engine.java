@@ -43,6 +43,7 @@ public class Engine implements Runnable {
 		
 		canvas = new Canvas();
 		canvas.setSize(screenDimension);
+		canvas.setBackground(BACKGROUND_COLOR);
 		
 		player1Manager = new UserEntityManager(canvas);
 		player1ShotManager = new PlayerShotEntityManager(screenDimension);
