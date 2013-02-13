@@ -81,18 +81,10 @@ public class Entity {
 		position.x = x;
 		position.y = y;
 		
-		// Tedious calculations required for consistency in case one of the dimensions is even.
-		
-		int topHalf = dimension.height / 2;
-		int bottomHalf = dimension.height - topHalf;
-		
-		int leftHalf = dimension.width / 2;
-		int rightHalf = dimension.width - leftHalf;
-		
-		bounds.top = y - topHalf;
-		bounds.bottom = y + bottomHalf;
-		bounds.left = x - leftHalf;
-		bounds.right = x + rightHalf;
+		bounds.top = y - dimension.height / 2;
+		bounds.bottom = bounds.top + dimension.height - 1; // suppressing 1 because bounds are inclusive.
+		bounds.left = x - dimension.width / 2;
+		bounds.right = bounds.left + dimension.width - 1; // suppressing 1 because bounds are inclusive.
 	}
 	
 	public boolean isOnScreen(Dimension screenDimension) {
