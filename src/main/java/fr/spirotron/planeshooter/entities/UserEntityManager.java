@@ -176,7 +176,15 @@ public class UserEntityManager implements EntityManager, KeyListener {
 
 	@Override
 	public void initialize(Entity entity) {
-		entity.setPosition(screenDimension.width/2, screenDimension.height);
-		entity.states[STATE_SPAWN_ANIMATION] = 45;
+		switch (entity.getType()) {
+			case PLAYER1:
+				entity.setPosition(screenDimension.width/3, screenDimension.height+entity.getDimension().height);
+				break;
+	
+			default:
+				throw new IllegalArgumentException("Entity received is not a player: "+entity.getType());
+		}
+		
+		entity.states[STATE_SPAWN_ANIMATION] = 80;
 	}
 }
