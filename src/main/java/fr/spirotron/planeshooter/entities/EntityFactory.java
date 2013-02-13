@@ -19,6 +19,20 @@ public class EntityFactory {
 						Sprite.PLAYER1_SHOT
 				),
 				0
+		),
+		PLAYER2(
+				anim(
+						Sprite.PLAYER2_1,
+						Sprite.PLAYER2_2,
+						Sprite.PLAYER2_3
+				),
+				1
+		),
+		PLAYER2_SHOT(
+				anim(
+						Sprite.PLAYER2_SHOT
+				),
+				0
 		);
 		
 		public final Sprite[] animation;

@@ -14,6 +14,8 @@ public class SpriteFactory {
 		PLAYER1_SHOT (MAIN_SHEET, 4, 169, 32, 32),
 		
 		PLAYER2_1 (MAIN_SHEET, 268, 400, 65, 65),
+		PLAYER2_2 (MAIN_SHEET, 334, 400, 65, 65),
+		PLAYER2_3 (MAIN_SHEET, 400, 400, 65, 65),
 		PLAYER2_SHOT (MAIN_SHEET, 37, 169, 32, 32);
 		
 		public final BufferedImage image;

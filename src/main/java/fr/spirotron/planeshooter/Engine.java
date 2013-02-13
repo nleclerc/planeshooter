@@ -33,6 +33,7 @@ public class Engine implements Runnable {
 	
 	private UserEntityManager player1Manager;
 	private PlayerShotEntityManager player1ShotManager;
+	private PlayerShotEntityManager player2ShotManager;
 	private AnimationEntityManager animationManager;
 	
 	private EntityFactory entityFactory;
@@ -46,7 +47,8 @@ public class Engine implements Runnable {
 		canvas.setBackground(BACKGROUND_COLOR);
 		
 		player1Manager = new UserEntityManager(canvas);
-		player1ShotManager = new PlayerShotEntityManager(screenDimension);
+		player1ShotManager = new PlayerShotEntityManager(screenDimension, EntityType.PLAYER1_SHOT);
+		player2ShotManager = new PlayerShotEntityManager(screenDimension, EntityType.PLAYER2_SHOT);
 		animationManager = new AnimationEntityManager();
 		
 		return canvas;
@@ -101,6 +103,13 @@ public class Engine implements Runnable {
 					}
 					break;
 					
+				case PLAYER2:
+					if (UserEntityManager.isFiring(player1Entity)) {
+						createShot(player2ShotManager);
+						UserEntityManager.stopFiring(player1Entity);
+					}
+					break;
+					
 				default:
 					break;
 			}
@@ -146,7 +155,7 @@ public class Engine implements Runnable {
 	}
 	
 	private void createShot(PlayerShotEntityManager shotManager) {
-		entityFactory.activateEntity(EntityType.PLAYER1_SHOT, shotManager, animationManager);
+		entityFactory.activateEntity(shotManager.getShotType(), shotManager, animationManager);
 	}
 
 	private void start() {

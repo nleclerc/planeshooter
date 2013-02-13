@@ -180,7 +180,11 @@ public class UserEntityManager implements EntityManager, KeyListener {
 			case PLAYER1:
 				entity.setPosition(screenDimension.width/3, screenDimension.height+entity.getDimension().height);
 				break;
-	
+			
+			case PLAYER2:
+				entity.setPosition(screenDimension.width*2/3, screenDimension.height+entity.getDimension().height);
+				break;
+				
 			default:
 				throw new IllegalArgumentException("Entity received is not a player: "+entity.getType());
 		}
