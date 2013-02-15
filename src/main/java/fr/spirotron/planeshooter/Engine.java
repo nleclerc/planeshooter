@@ -7,6 +7,8 @@ import java.awt.Graphics2D;
 import java.awt.Toolkit;
 import java.awt.image.BufferStrategy;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import fr.spirotron.planeshooter.entities.AnimationEntityManager;
 import fr.spirotron.planeshooter.entities.Entity;
@@ -18,6 +20,8 @@ import fr.spirotron.planeshooter.utils.Bounds;
 
 
 public class Engine implements Runnable {
+	private static final Logger logger = Logger.getLogger(Engine.class.getName());
+	
 	private static final Color BACKGROUND_COLOR = new Color(0x024994);
 	private static final int DISPLAY_BUFFER_COUNT = 2;
 	private static final int TICK = 10;
@@ -39,7 +43,8 @@ public class Engine implements Runnable {
 	private EntityFactory entityFactory;
 	
 	public Canvas createCanvas(Dimension screenDimension) {
-		System.out.println("Creating canvas...");
+		logger.info("Creating canvas...");
+		
 		this.screenDimension = screenDimension;
 		
 		canvas = new Canvas();
@@ -55,7 +60,7 @@ public class Engine implements Runnable {
 	}
 	
 	public void init() throws Exception {
-		System.out.println("Initializing engine...");
+		logger.info("Initializing engine...");
 		canvas.createBufferStrategy(DISPLAY_BUFFER_COUNT);
 		bufferStrategy = canvas.getBufferStrategy();
 		
@@ -149,7 +154,9 @@ public class Engine implements Runnable {
 		Toolkit.getDefaultToolkit().sync();
 		
 		long totalTime = System.currentTimeMillis() - startTime;
-		System.out.println("Update done in "+totalTime+" ms.");
+		
+		if (logger.isLoggable(Level.FINEST))
+			logger.finest("Update done in "+totalTime+" ms.");
 		
 		return totalTime;
 	}
